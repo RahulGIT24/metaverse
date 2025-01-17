@@ -5,5 +5,5 @@ export interface IApiResponse<T = any>{
 }
 
 export interface DecodedToken {
-    id:number
+    id:string
 }

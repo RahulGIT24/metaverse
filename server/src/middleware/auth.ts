@@ -24,7 +24,8 @@ export const verifyJWT = asyncHandler(async(req:Request,res:Response,next:NextFu
             select:{
                 id:true,
                 username:true,
-                email:true
+                email:true,
+                role:true
             }
         })
 
@@ -36,7 +37,20 @@ export const verifyJWT = asyncHandler(async(req:Request,res:Response,next:NextFu
 
         next();
     } catch (error) {
-        console.log(error)
+        if (error instanceof ApiResponse) {
+            return res.status(error.statuscode).json(error);
+        }
+        return res.status(500).json(new ApiResponse(500,null,"Internal Server Error"));
+    }
+})
+
+export const verifyAdmin = asyncHandler(async(req,res:Response,next:NextFunction)=>{
+    try {
+        if(req.user.role.toLowerCase()!=="admin"){
+            throw new ApiResponse(401,null,"Unauthorized")
+        }
+        next();
+    } catch (error) {
         if (error instanceof ApiResponse) {
             return res.status(error.statuscode).json(error);
         }

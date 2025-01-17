@@ -31,18 +31,25 @@ exports.signUp = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0
                 ]
             }
         });
+        const { email, password, type, username } = req.body;
         if (user) {
             throw new ApiResponse_1.ApiResponse(400, null, "User with this email or username already exist");
         }
         const hashedPassword = yield bcrypt_1.default.hash(req.body.password, 10);
-        req.body.password = hashedPassword;
-        const data = Object.assign(Object.assign({}, req.body), { isVerified: true });
+        const data = {
+            email,
+            password: hashedPassword,
+            role: type,
+            username,
+            isVerified: true
+        };
         const createdUser = yield prisma_1.default.user.create({
             data
         });
         return res.status(201).json(new ApiResponse_1.ApiResponse(201, createdUser, "User Registered"));
     }
     catch (error) {
+        console.log(error);
         if (error instanceof ApiResponse_1.ApiResponse) {
             return res.status(error.statuscode).json(new ApiResponse_1.ApiResponse(error.statuscode, error.data, error.message));
         }

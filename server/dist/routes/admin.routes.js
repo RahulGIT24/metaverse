@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const admin_controller_1 = require("../controllers/admin.controller");
+const auth_1 = require("../middleware/auth");
+const router = (0, express_1.Router)();
+router.route("/element").post(auth_1.verifyJWT, auth_1.verifyAdmin, admin_controller_1.createElement).patch(auth_1.verifyJWT, auth_1.verifyAdmin, admin_controller_1.updateElement);
+router.post("/map", auth_1.verifyJWT, auth_1.verifyAdmin, admin_controller_1.createMap);
+router.route("/avatar").post(auth_1.verifyJWT, auth_1.verifyAdmin, admin_controller_1.createAvatar);
+exports.default = router;

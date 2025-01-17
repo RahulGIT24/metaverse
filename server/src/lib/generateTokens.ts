@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
 
-export const generateAccessToken = (user: { id: number, username: string }) => {
+export const generateAccessToken = (user: { id: string, username: string }) => {
     return jwt.sign(
         { id:user.id,username:user.username },
         process.env.JWT_SECRET as string,
@@ -9,7 +9,7 @@ export const generateAccessToken = (user: { id: number, username: string }) => {
         }
     )
 }
-export const generateRefreshToken = (user: { id: number }) => {
+export const generateRefreshToken = (user: { id: string }) => {
     return jwt.sign(
         { id:user.id },
         process.env.JWT_SECRET as string,

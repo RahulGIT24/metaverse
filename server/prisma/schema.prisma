@@ -21,7 +21,7 @@ model User{
   refreshToken String?
   isVerified Boolean
   forgotPasswordToken String?
-  role     Role @default(User)
+  role     String @default("user")
   spaces   Space[]
   avatarId String?
   avatar    Avatar? @relation(fields: [avatarId], references: [id])
@@ -86,9 +86,4 @@ model Avatar {
   imageUrl String?
   name     String?
   users    User[]
-}
-
-enum Role {
-  Admin
-  User
 }
