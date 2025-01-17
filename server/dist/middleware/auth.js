@@ -22,7 +22,7 @@ exports.verifyJWT = (0, asyncHandler_1.asyncHandler)((req, res, next) => __await
     try {
         const token = req.cookies.accesstoken || ((_a = req.header("Authorization")) === null || _a === void 0 ? void 0 : _a.replace("Bearer ", ""));
         if (!token) {
-            throw new ApiResponse_1.ApiResponse(401, null, "Unauthorized");
+            throw new ApiResponse_1.ApiResponse(403, null, "Unauthorized");
         }
         const decodedToken = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
         const user = yield prisma_1.default.user.findUnique({
@@ -36,7 +36,7 @@ exports.verifyJWT = (0, asyncHandler_1.asyncHandler)((req, res, next) => __await
             }
         });
         if (!user) {
-            throw new ApiResponse_1.ApiResponse(401, null, "Unauthorized");
+            throw new ApiResponse_1.ApiResponse(403, null, "Unauthorized");
         }
         req.user = user;
         next();
