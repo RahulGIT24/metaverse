@@ -7,16 +7,58 @@ import { spaceSchema } from "../validators/zod";
 export const createSpace = asyncHandler(async(req,res)=>{
     try {
         validate(spaceSchema,req.body);
-        const {dimensions,name} = req.body;
-        const space = await prisma.space.create({
-            data:{
-                width:parseInt(dimensions.split("x")[0]),
-                height:parseInt(dimensions.split("x")[1]),
-                name:name,
-                creatorId:req.user.id
+        const {dimensions,name,mapId} = req.body;
+
+        if(!mapId){
+            const space = await prisma.space.create({
+                data:{
+                    width:parseInt(dimensions.split("x")[0]),
+                    height:parseInt(dimensions.split("x")[1]),
+                    name:name,
+                    creatorId:req.user.id
+                }
+            })
+            return res.status(201).json(new ApiResponse(200,{spaceId:space.id},"Space Created"))
+        }
+
+        const map = await prisma.map.findFirst({
+            where:{
+                id:mapId
+            },
+            select:{
+                mapElements:true,
+                width:true,
+                height:true
             }
         })
-        return res.status(201).json(new ApiResponse(200,{spaceId:space.id},"Space Created"))
+
+        if(!map){
+            throw new ApiResponse(400,null,"Invalid Map Id")
+        }
+
+        let space = await prisma.$transaction(async()=>{
+            const space = await prisma.space.create({
+                data:{
+                    width:map.width,
+                    height:map.height,
+                    name:name,
+                    creatorId:req.user.id
+                }
+            })
+            await prisma.spaceElements.createMany({
+                data:map.mapElements.map(e=>({
+                    spaceId:space.id,
+                    elementId:e.elementId,
+                    x:e.x!,
+                    y:e.y!
+                }))
+            })
+
+            return space;
+        })
+
+        return res.status(200).json(new ApiResponse(200,{spaceId:space.id},"Space Created"))
+
     } catch (error) {
         if(error instanceof ApiResponse){
             return res.status(error.statuscode).json(error)
