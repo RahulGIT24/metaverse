@@ -1,6 +1,8 @@
 import { ApiResponse } from "../lib/ApiResponse";
 import { asyncHandler } from "../lib/asyncHandler";
 import prisma from "../lib/prisma";
+import { validate } from "../validators/bodyValidator";
+import { metadataValidator } from "../validators/zod";
 
 export const getUser = asyncHandler(async (req, res) => {
   try {
@@ -22,6 +24,15 @@ export const getUser = asyncHandler(async (req, res) => {
 //set meta data for the user
 export const setMetaData = asyncHandler(async (req, res) => {
   try {
+    validate(metadataValidator,req.body);
+    const findAvatar = await prisma.avatar.findUnique({
+      where:{
+        id:req.body.avatarId,
+      }
+    })
+    if(!findAvatar){
+      throw new ApiResponse(400,null,"Invalid Avatar Id")
+    }
     const user = await prisma.user.update({
       where: {
         id: req.user.id,
@@ -51,7 +62,6 @@ export const setMetaData = asyncHandler(async (req, res) => {
 
 //get avatars
 export const getAvatars = asyncHandler(async (rep, res) => {
-    console.log("hello")
   try {
     const avatars = await prisma.avatar.findMany();
     if (!avatars) {

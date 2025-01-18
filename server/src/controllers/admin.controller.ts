@@ -33,10 +33,10 @@ export const updateElement = asyncHandler(async (req, res) => {
                 imageUrl: req.body.imageUrl
             }
         })
-        if (!updateElement) {
+        if (!updatedElement){
             throw new ApiResponse(400, null, "Can't update element")
         }
-        return res.status(200).json(new ApiResponse(200, updateElement, "Element Updated"))
+        return res.status(200).json(new ApiResponse(200, updatedElement, "Element Updated"))
     } catch (error) {
         if (error instanceof ApiResponse) {
             return res.status(error.statuscode).json(error);

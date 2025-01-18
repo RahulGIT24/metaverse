@@ -47,3 +47,7 @@ export const mapSchema = z.object({
         y: z.number(),
     }))
 })
+
+export const metadataValidator = z.object({
+    avatarId:z.string()
+})
