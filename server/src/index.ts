@@ -12,6 +12,7 @@ const PORT = process.env.PORT
 import authRoutes from "./routes/auth.routes.js"
 import userRoutes from "./routes/user.routes.js"
 import adminRoutes from "./routes/admin.routes.js"
+import spaceRoutes from "./routes/space.routes.js"
 
 app.use(express.json())
 app.use(cookieParser())
@@ -23,6 +24,7 @@ app.use(cors({
 app.use("/api/v1",authRoutes)
 app.use("/api/v1/user",userRoutes)
 app.use("/api/v1/admin",adminRoutes)
+app.use("/api/v1/space",spaceRoutes)
 app.get("/",(req,res)=>{res.send("Health Checked")})
 
 app.listen(PORT, () => {

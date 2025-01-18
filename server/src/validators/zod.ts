@@ -37,9 +37,11 @@ export const avatarSchema = z.object({
     name:z.string()
 })
 
+const dimensionSchema = z.string().regex(/^[0-9]{1,4}x[0-9]{1,4}$/)
+
 export const mapSchema = z.object({
     thumbnail: z.string(),
-    dimensions: z.string().regex(/^[0-9]{1,4}x[0-9]{1,4}$/),
+    dimensions: dimensionSchema,
     name: z.string(),
     defaultElements: z.array(z.object({
         elementId: z.string(),
@@ -50,4 +52,9 @@ export const mapSchema = z.object({
 
 export const metadataValidator = z.object({
     avatarId:z.string()
+})
+
+export const spaceSchema = z.object({
+    dimensions:dimensionSchema,
+    name:z.string().min(3,{message:"Name Should contain 3 characters"})
 })
