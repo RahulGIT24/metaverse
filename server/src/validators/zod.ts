@@ -58,3 +58,8 @@ export const spaceSchema = z.object({
     dimensions:dimensionSchema,
     name:z.string().min(3,{message:"Name Should contain 3 characters"})
 })
+
+export const spaceElementSchema = z.object({
+    x:z.number().min(0,{message:"Invalid Coord for X"}),
+    y:z.number().min(0,{message:"Invalid Coord for Y"}),
+})
