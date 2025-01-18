@@ -20,8 +20,8 @@ app.use(cors({
     credentials:true
 }))
 
-app.use("/api/auth",authRoutes)
-app.use("/api/user",userRoutes)
+app.use("/api/v1",authRoutes)
+app.use("/api/v1/user",userRoutes)
 app.use("/api/v1/admin",adminRoutes)
 app.get("/",(req,res)=>{res.send("Health Checked")})
 

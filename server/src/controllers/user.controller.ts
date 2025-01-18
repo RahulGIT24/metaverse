@@ -24,7 +24,7 @@ export const setMetaData = asyncHandler(async (req, res) => {
   try {
     const user = await prisma.user.update({
       where: {
-        email: req.user.email,
+        id: req.user.id,
       },
       data: {
         avatarId: req.body.avatarId,
@@ -72,9 +72,7 @@ export const getAvatars = asyncHandler(async (rep, res) => {
 //bulk meta data
 export const getBulkMetaData = asyncHandler(async (req, res) => {
   try {
-      console.log("hehehehe",req.query.ids)
     const ids = req.query.ids.slice(1, -1).split(",");
-    console.log(ids)
     if (ids.length === 0) {
       throw new ApiResponse(
         401,

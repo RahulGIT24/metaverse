@@ -155,7 +155,7 @@ describe("User metadata endpoint", async () => {
     expect(response.status).toBe(400);
   });
 
-  test("User can update thrie metadata with the right avatar id", async () => {
+  test("User can update their metadata with the right avatar id", async () => {
     const response = await axios.post(
       `${BACKEND_URL}/api/v1/user/metadata`,
       {
@@ -196,7 +196,7 @@ describe("User avatar information", () => {
     });
     userId = signupResponse.data.userId;
 
-    console.log("User id " + userid);
+    console.log("User id " + userId);
 
     const response = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
       username,
@@ -224,7 +224,7 @@ describe("User avatar information", () => {
   test("Get back avatar information for a user", async () => {
     console.log("asking for user with id " + userId);
     const response = await axios.get(
-      `${BACKEND_URL}/api/v1/user/metadata/bulk?ids=[${userid}]`
+      `${BACKEND_URL}/api/v1/user/metadata/bulk?ids=[${userId}]`
     );
     console.log("response was " + userId);
     console.log(JSON.stringify(response.data));
@@ -240,6 +240,7 @@ describe("User avatar information", () => {
   });
 });
 
+//* here 18-01-2025
 describe("Space Information", () => {
   let mapId;
   let element1Id;
