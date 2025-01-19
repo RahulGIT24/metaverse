@@ -7,3 +7,9 @@ export interface IApiResponse<T = any>{
 export interface DecodedToken {
     id:string
 }
+
+export interface 
+export interface Room{ 
+    id:string,
+    members:Array<string>
+}
