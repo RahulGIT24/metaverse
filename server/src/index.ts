@@ -28,5 +28,7 @@ app.use("/api/v1/space",spaceRoutes)
 app.get("/",(req,res)=>{res.send("Health Checked")})
 
 app.listen(PORT, () => {
+
+    
     console.log("Server running on PORT ", PORT)
 })
