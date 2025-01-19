@@ -1,12 +1,11 @@
 import { map } from "zod";
-import { Room } from "../types/types";
+import { OutgoingMessage } from "../types/types";
 import ws from "./socket";
 import { User } from "./User";
 
-class RoomManager {
-  //user add
-  //user remove
-  //broadcast events
+export class RoomManager {
+
+  rooms = new Map<string, User[]>();
   static instance: RoomManager;
 
   static getInstance() {
@@ -15,8 +14,7 @@ class RoomManager {
     }
     return this.instance;
   }
-  //make a room type
-  private rooms = new Map<string, User[]>();
+
   private constructor() {
     this.rooms = new Map();
   }
@@ -41,7 +39,7 @@ class RoomManager {
     //this.rooms.delete(spaceId);
   }
 
-  public boradcast(message: any, roomId:string, user:User) {
+  public broadcast(message: OutgoingMessage, roomId:string, user:User) {
   if(!this.rooms.has(roomId)){
     return ; 
   }
