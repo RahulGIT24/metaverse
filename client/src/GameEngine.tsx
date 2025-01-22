@@ -38,111 +38,127 @@ class Sprite {
 
 export default function GameEngine() {
   const canvasRef = useRef<any>(null);
+
   const mapImageRef = useRef<HTMLImageElement>(new Image());
   const playerImageRef = useRef<HTMLImageElement>(new Image());
   const imageLoadRef = useRef<boolean>(false);
   const [mapPos, setMapPos] = useState({ x: 0, y: 0 });
   const [player, setPlayer] = useState<any>();
   const [map, setMap] = useState<any>();
-
+  const pressedkeys: { [key: string]: boolean } = {};
   useEffect(() => {
-    mapImageRef.current.src = "/map.svg";
-    playerImageRef.current.src = "/texture_wood.jpg";
+    function loadImages() {
+      mapImageRef.current.src = "/village_map.jpeg";
+      playerImageRef.current.src = "/texture_wood.jpg";
 
-    mapImageRef.current.onload = () => console.log("Map image loaded.");
-    playerImageRef.current.onload = () => {
-      imageLoadRef.current = true;
-      console.log("Player image loaded.");
-    };
-    setPlayer(
-      new Sprite({
-        dimensions: {
-          w: 40,
-          h: 40,
-        },
-        position: {
-          x: canvasRef.current.width / 2,
-          y: canvasRef.current.height / 2,
-        },
-        image: playerImageRef.current,
-      })
-    );
-    setMap(
-      new Sprite({
-        dimensions: {
-          w: 1270,
-          h: 700,
-        },
-        position: {
-          x: 0,
-          y: 0,
-        },
-        image: mapImageRef.current,
-      })
-    );
-    //  draw();
+      mapImageRef.current.onload = () => {
+        console.log("Map image loaded.");
+        setMap(
+          new Sprite({
+            dimensions: {
+              w: 1270,
+              h: 700,
+            },
+            position: {
+              x: 0,
+              y: 0,
+            },
+            image: mapImageRef.current,
+          })
+        );
+        playerImageRef.current.onload = () => {
+          imageLoadRef.current = true;
+          console.log("Player image loaded.");
+          setPlayer(
+            new Sprite({
+              dimensions: {
+                w: 40,
+                h: 40,
+              },
+              position: {
+                x: canvasRef.current.width / 2,
+                y: canvasRef.current.height / 2,
+              },
+              image: playerImageRef.current,
+            })
+          );
+        };
+      };
+    }
+
+    loadImages();
+    draw();
   }, []);
 
   const draw = () => {
+    console.log('first')
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    //  console.log('here')
+    //console.log('here')
     if (map) {
+      // console.log("mapdrawn ")
       map.draw(ctx);
-      console.log('map is drawn')
     }
     if (player) {
-      console.log('player isndrawn')
+      //console.log('player drawn')
       player.draw(ctx);
     }
 
-    requestAnimationFrame(draw);
+    //requestAnimationFrame(draw);
   };
 
   const handleKeypress = (e: KeyboardEvent) => {
-    /* if(map&&player&&(-map.position.x>canvasRef.current.width-player.width||map.position.y>canvasRef.current.height)){
-    console.log("boundary");
-    map.pos.x+=1000;
-    
-    return ;
-  } */
-    /*   if (map) { 
-    console.log(map, '\n', canvasRef.current);
-  } */
-    if (map) {
+    /*  if (map) {
+      console.log(map, "\n", canvasRef.current);
+    } */ console.log("here", map);
+    if (map || player) {
+      console.log("he");
       const speed = 10;
-
-      if (e.code === "KeyW" && !(map.position.y > canvasRef.current.height)) {
-        map.position.y += speed;
+      switch (e.code) {
+        case "KeyW":
+          if (!(map.position.y > canvasRef.current.height / 2 - player.width))
+            map.position.y += speed;
+          break;
+        case "KeyS":
+          if (!(map.position.y < -canvasRef.current.height / 2 + player.width))
+            map.position.y -= speed;
+          break;
+        case "KeyA":
+          if (!(map.position.x > canvasRef.current.width / 2 - player.width))
+            map.position.x += speed;
+          break;
+        case "KeyD":
+          if (!(map.position.x < -canvasRef.current.width / 2 + player.width))
+            map.position.x -= speed;
+          break;
+        default:
+          break;
       }
-      if (e.code === "KeyS" && !(map.position.y < -canvasRef.current.height)) {
-        map.position.y -= speed;
-      }
-      if (e.code === "KeyA" && !(map.position.x > canvasRef.current.width)) {
-        map.position.x += speed;
-      }
-      if (e.code === "KeyD" && !(map.position.x < -canvasRef.current.width)) {
-        map.position.x -= speed;
-      }
-
       draw(); // Redraw immediately after keypress
     }
   };
 
-  useEffect(() => {
-    draw();
-  }, [mapPos,]);
-
+  function handleKeyUp() {}
   useEffect(() => {
     document.addEventListener("keydown", handleKeypress);
+    document.addEventListener("keydown", handleKeyUp);
+
     return () => {
-      // document.removeEventListener("keydown", handleKeypress);
+      document.removeEventListener("keydown", handleKeypress);
+      document.removeEventListener("keydown", handleKeyUp);
     };
   }, []);
+
+  useEffect(() => {
+    function gameLoop() {
+      draw();
+      requestAnimationFrame(gameLoop)
+    }
+  }, [mapPos, map, player]); //in future controlled by socket....more the number of players more number of draws
 
   return (
     <>
