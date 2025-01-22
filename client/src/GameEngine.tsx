@@ -42,10 +42,12 @@ export default function GameEngine() {
   const mapImageRef = useRef<HTMLImageElement>(new Image());
   const playerImageRef = useRef<HTMLImageElement>(new Image());
   const imageLoadRef = useRef<boolean>(false);
-  const [mapPos, setMapPos] = useState({ x: 0, y: 0 });
+  // const [mapPos, setMapPos] = useState({ x: 0, y: 0 });
   const [player, setPlayer] = useState<any>();
   const [map, setMap] = useState<any>();
-  const pressedkeys: { [key: string]: boolean } = {};
+  const speed = 10;
+  // const pressedkeys: { [key: string]: boolean } = {};
+  const pressedKeys = useRef<Map<string, boolean>>(new Map<string, boolean>());
   useEffect(() => {
     function loadImages() {
       mapImageRef.current.src = "/village_map.jpeg";
@@ -91,7 +93,7 @@ export default function GameEngine() {
   }, []);
 
   const draw = () => {
-    console.log('first')
+    // console.log('first')
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -112,10 +114,8 @@ export default function GameEngine() {
   };
 
   const handleKeypress = (e: KeyboardEvent) => {
-    /*  if (map) {
-      console.log(map, "\n", canvasRef.current);
-    } */ console.log("here", map);
-    if (map || player) {
+    //console.log("here", map);
+    /*  if (map || player) {
       console.log("he");
       const speed = 10;
       switch (e.code) {
@@ -138,27 +138,64 @@ export default function GameEngine() {
         default:
           break;
       }
-      draw(); // Redraw immediately after keypress
-    }
+    } */
+
+    pressedKeys.current.set(`${e.code}`, true);
   };
 
-  function handleKeyUp() {}
+  function handleKeyUp(e: KeyboardEvent) {
+    pressedKeys.current.set(`${e.code}`, false);
+  }
+
+  function updateMovement() {
+    //  console.log('1')
+    console.log(pressedKeys.current.get("KeyD"));
+    if (
+      pressedKeys.current.get("KeyW") &&
+      !(map.position.y > canvasRef.current.height / 2 - player.height)
+    ) { 
+      console.log("pressed w");
+      map.position.y += speed; 
+    }
+    if (
+      pressedKeys.current.get("KeyS") &&
+      !(map.position.y < -canvasRef.current.height / 2 + player.height)
+    ) {
+      map.position.y += speed;
+    }
+    if (
+      pressedKeys.current.get("KeyA") &&
+      !(map.position.x > canvasRef.current.width / 2 - player.width)
+    ) {
+      map.position.x += speed;
+    }
+    if (
+      pressedKeys.current.get("KeyD") &&
+      !(map.position.x < -canvasRef.current.width / 2 + player.width)
+    ) {
+      map.position.x += speed;
+    }
+    draw();
+  }
+
   useEffect(() => {
     document.addEventListener("keydown", handleKeypress);
     document.addEventListener("keydown", handleKeyUp);
 
     return () => {
-      document.removeEventListener("keydown", handleKeypress);
-      document.removeEventListener("keydown", handleKeyUp);
+     // document.removeEventListener("keydown", handleKeypress);
+     // document.removeEventListener("keydown", handleKeyUp);
     };
   }, []);
 
   useEffect(() => {
     function gameLoop() {
       draw();
-      requestAnimationFrame(gameLoop)
+      updateMovement();
+      requestAnimationFrame(gameLoop);
     }
-  }, [mapPos, map, player]); //in future controlled by socket....more the number of players more number of draws
+    gameLoop();
+  }, [map, player]); //in future controlled by addition of players or removal....more the number of players more number of draws
 
   return (
     <>
