@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from "rea
 import Login from "./pages/Login"
 import Signup from "./pages/Signup"
 import useAuth, { isAuthorized } from "./hooks/useAuth"
+import AdminMapEditor from "./pages/Admin/AdminMapEditor"
 
 const RoleBasedAccess = ({allowedRoles, redirectPath = "/login"}:{allowedRoles:any,redirectPath:any})=>{
   const user = useAuth();
@@ -21,6 +22,8 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<Login/>}/>
         <Route path="/signup" element={<Signup/>}/>
+        <Route path="/edit-map" element={<AdminMapEditor/>}/>
+
       </Routes>
     </BrowserRouter>
   )

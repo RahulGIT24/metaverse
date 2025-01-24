@@ -38,21 +38,17 @@ class Sprite {
 
 export default function GameEngine() {
   const canvasRef = useRef<any>(null);
-
   const mapImageRef = useRef<HTMLImageElement>(new Image());
   const playerImageRef = useRef<HTMLImageElement>(new Image());
   const imageLoadRef = useRef<boolean>(false);
-  // const [mapPos, setMapPos] = useState({ x: 0, y: 0 });
   const [player, setPlayer] = useState<any>();
   const [map, setMap] = useState<any>();
   const speed = 10;
-  // const pressedkeys: { [key: string]: boolean } = {};
-  const pressedKeys = useRef<Map<string, boolean>>(new Map<string, boolean>());
+  const pressedKeys = useRef<Map<string, boolean>>(new Map());
   useEffect(() => {
     function loadImages() {
       mapImageRef.current.src = "/village_map.jpeg";
       playerImageRef.current.src = "/texture_wood.jpg";
-
       mapImageRef.current.onload = () => {
         console.log("Map image loaded.");
         setMap(
@@ -87,7 +83,6 @@ export default function GameEngine() {
         };
       };
     }
-
     loadImages();
     draw();
   }, []);
@@ -183,8 +178,8 @@ export default function GameEngine() {
     document.addEventListener("keydown", handleKeyUp);
 
     return () => {
-     // document.removeEventListener("keydown", handleKeypress);
-     // document.removeEventListener("keydown", handleKeyUp);
+     document.removeEventListener("keydown", handleKeypress);
+     document.removeEventListener("keydown", handleKeyUp);
     };
   }, []);
 
